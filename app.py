@@ -26,17 +26,25 @@ users = [
   {"id": 20, "name": "Paula", "email": "paula@mail.com"}
 ]
 
+# Ruta raíz para verificar que la API está funcionando
+@app.route('/')
+def home():
+    return "API de usuarios funcionando"
 
+# Obtener lista de usuarios
 @app.route('/users', methods=['GET'])
 def get_users():
     return jsonify(users)
 
+# Agregar un nuevo usuario
 @app.route('/users', methods=['POST'])
 def add_user():
     new_user = request.get_json()
+    if not new_user or not "id" in new_user or not "name" in new_user or not "email" in new_user:
+        return jsonify({"error": "Faltan campos en el usuario. Debe incluir id, name y email"}), 400
     users.append(new_user)
     return jsonify(new_user), 201
 
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))  # Usar puerto dinámico o 5000 localmente
+    port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
