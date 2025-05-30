@@ -25,6 +25,7 @@ users = [
   {"id": 19, "name": "Esteban", "email": "esteban@mail.com"},
   {"id": 20, "name": "Paula", "email": "paula@mail.com"}
 ]
+
 @app.route('/users', methods=['GET'])
 def get_users():
     return jsonify(users)
@@ -37,3 +38,4 @@ def add_user():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
