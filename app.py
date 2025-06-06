@@ -4,61 +4,25 @@ import pandas as pd
 
 app = Flask(__name__)
 
-# Ruta al archivo CSV
-archivo_csv = 'trata_de_personas.csv'
-
-# Leer los datos desde el CSV
-def cargar_casos():
+# Leer usuarios desde CSV
+def cargar_usuarios_desde_csv():
     try:
-        df = pd.read_csv(archivo_csv)
-        return df.to_dict(orient='records')
+        df = pd.read_csv('trata_de_personas.csv', encoding='utf-8')  # Asegúrate de que el archivo esté en la raíz del proyecto
+        return df.to_dict(orient='records')  # Convierte el DataFrame en lista de diccionarios
     except Exception as e:
-        print(f"Error al leer CSV: {e}")
+        print("❌ Error al leer el archivo CSV:", e)
         return []
 
-# Guardar datos al CSV
-def guardar_casos(casos):
-    try:
-        df = pd.DataFrame(casos)
-        df.to_csv(archivo_csv, index=False)
-    except Exception as e:
-        print(f"Error al guardar CSV: {e}")
-
-# Carga inicial
-casos = cargar_casos()
+# Carga inicial de datos
+users = cargar_usuarios_desde_csv()
 
 @app.route('/')
 def home():
-    return "API de Casos de Trata funcionando correctamente"
+    return "✅ API de usuarios desde CSV funcionando correctamente"
 
-@app.route('/casos', methods=['GET'])
-def get_casos():
-    return jsonify(casos)
-
-@app.route('/casos', methods=['POST'])
-def agregar_caso():
-    nuevo = request.get_json()
-    casos.append(nuevo)
-    guardar_casos(casos)
-    return jsonify(nuevo), 201
-
-@app.route('/casos/<int:indice>', methods=['PUT'])
-def actualizar_caso(indice):
-    if indice < 0 or indice >= len(casos):
-        return jsonify({"error": "Índice fuera de rango"}), 404
-    actualizado = request.get_json()
-    casos[indice].update(actualizado)
-    guardar_casos(casos)
-    return jsonify(casos[indice]), 200
-
-@app.route('/casos/<int:indice>', methods=['DELETE'])
-def eliminar_caso(indice):
-    global casos
-    if indice < 0 or indice >= len(casos):
-        return jsonify({"error": "Índice fuera de rango"}), 404
-    eliminado = casos.pop(indice)
-    guardar_casos(casos)
-    return jsonify({"mensaje": "Caso eliminado", "caso": eliminado}), 200
+@app.route('/users', methods=['GET'])
+def get_users():
+    return jsonify(users)
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
